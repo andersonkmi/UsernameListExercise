@@ -12,8 +12,8 @@ public class RestrictedWordVerificationService {
     @Resource
     private DataRepository dataRepository;
 
-    public boolean containsRestrictedWords(final String userName) {
+    public String findRestrictedWord(final String userName) {
         List<RestrictedWord> items = dataRepository.findAllRestrictedWords();
-        return items.parallelStream().anyMatch(item -> userName.contains(item.getWord()));
+        return items.stream().filter(item -> userName.toLowerCase().contains(item.getWord().toLowerCase())).findFirst().map(RestrictedWord::getWord).orElse("");
     }
 }

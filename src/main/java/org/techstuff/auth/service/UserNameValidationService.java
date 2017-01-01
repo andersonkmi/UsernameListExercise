@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.techstuff.auth.data.DataRepository;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserNameValidationService {
@@ -16,16 +18,30 @@ public class UserNameValidationService {
     @Resource
     private RestrictedWordVerificationService restrictedWordVerificationService;
 
-    public void validate(final String userName) throws InvalidUserNameException, UserNameAlreadyExistsException, UserNameRestrictedWordException {
+    @Resource
+    private UserNameSuggestionService userNameSuggestionService;
+
+    public UserNameValidationResult validate(final String userName) throws InvalidUserNameException {
+        UserNameValidationResult result = new UserNameValidationResult();
+
         verifyUserNameMinimumLength(userName);
 
-        if(userNameAlreadyInUse(userName)) {
-            throw new UserNameAlreadyExistsException(String.format("User name '%s' already exists", userName));
+        List<String> items = new ArrayList<>();
+        verifyUserNameAlreadyInUse(userName, items);
+        if(!items.isEmpty()) {
+            result.setSuggestions(items);
+            return result;
         }
 
-        if(restrictedWordVerificationService.containsRestrictedWords(userName)) {
-            throw new UserNameRestrictedWordException(String.format("User name '%s' contains restricted words", userName));
+        verifyRestrictedWords(userName, items);
+        if(!items.isEmpty()) {
+            result.setSuggestions(items);
+            return result;
         }
+
+        result.setIsValid(true);
+        result.setSuggestions(items);
+        return result;
     }
 
     private void verifyUserNameMinimumLength(final String userName) throws InvalidUserNameException {
@@ -34,8 +50,17 @@ public class UserNameValidationService {
         }
     }
 
-    private boolean userNameAlreadyInUse(final String userName) {
+    private void verifyUserNameAlreadyInUse(final String userName, List<String> suggestions) {
         int result = dataRepository.count(userName);
-        return result > 0;
+        if(result > 0) {
+            suggestions.addAll(userNameSuggestionService.generateSuggestions(userName));
+        }
+    }
+
+    private void verifyRestrictedWords(final String userName, List<String> suggestions) {
+        String restrictedWord = restrictedWordVerificationService.findRestrictedWord(userName);
+        if(!restrictedWord.isEmpty()) {
+            suggestions.addAll(userNameSuggestionService.generateSuggestions(userName, restrictedWord));
+        }
     }
 }

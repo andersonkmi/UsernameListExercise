@@ -40,4 +40,11 @@ public class DataRepository {
         List<RestrictedWord> results = jdbcTemplate.query(statement, new RestrictedWordRowMapper());
         return results;
     }
+
+    @Transactional
+    public void addRestrictedWord(String word) {
+        String statement = "INSERT INTO forbidden_words(word) VALUES(?)";
+        int modified = jdbcTemplate.update(statement, new Object[] {word});
+        logger.info(String.format("Inserted/Modified rows: %d", modified));
+    }
 }
