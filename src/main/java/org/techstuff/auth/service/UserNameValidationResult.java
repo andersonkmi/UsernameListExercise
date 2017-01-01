@@ -4,7 +4,16 @@ import java.util.List;
 
 public class UserNameValidationResult {
     private boolean isValid;
+    private String message;
     private List<String> suggestions;
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 
     public void setIsValid(boolean flag) {
         isValid = flag;

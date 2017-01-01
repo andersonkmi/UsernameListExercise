@@ -29,17 +29,20 @@ public class UserNameValidationService {
         List<String> items = new ArrayList<>();
         verifyUserNameAlreadyInUse(userName, items);
         if(!items.isEmpty()) {
+            result.setMessage("User name is already in use!");
             result.setSuggestions(items);
             return result;
         }
 
         verifyRestrictedWords(userName, items);
         if(!items.isEmpty()) {
+            result.setMessage("User name contains restricted words!");
             result.setSuggestions(items);
             return result;
         }
 
         result.setIsValid(true);
+        result.setMessage("User name is valid!");
         result.setSuggestions(items);
         return result;
     }

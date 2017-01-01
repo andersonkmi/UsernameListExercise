@@ -30,7 +30,7 @@ public class UserNameSuggestionService {
 
     private void processStrategies(List<String> suggestions, String userName) {
         int attempts = 0;
-        while(suggestions.size() <= SUGGESTIONS_QUANTITY && attempts < 3) {
+        while(suggestions.size() < SUGGESTIONS_QUANTITY && attempts < 3) {
             if(attempts == 0) {
                 firstStrategy(suggestions, userName);
             } else if(attempts == 1) {
@@ -38,6 +38,8 @@ public class UserNameSuggestionService {
             } else {
                 thirdStrategy(suggestions, userName);
             }
+
+            attempts++;
         }
     }
 
@@ -51,7 +53,7 @@ public class UserNameSuggestionService {
     }
 
     private void secondStrategy(List<String> suggestions, String userName) {
-        for(int counter = 0; counter < SUGGESTIONS_QUANTITY; counter++) {
+        for(int counter = 0; counter < SUGGESTIONS_QUANTITY - suggestions.size(); counter++) {
             String suggestion = String.format("%s%s%d", userName, userName, counter + 1);
             if(dataRepository.count(suggestion) == 0) {
                 suggestions.add(suggestion);
@@ -63,7 +65,7 @@ public class UserNameSuggestionService {
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
 
-        for(int counter = 0; counter < SUGGESTIONS_QUANTITY; counter++) {
+        for(int counter = 0; counter < SUGGESTIONS_QUANTITY - suggestions.size(); counter++) {
             String suggestion = String.format("%s%d", userName, random.nextInt());
             if(dataRepository.count(suggestion) == 0) {
                 suggestions.add(suggestion);
