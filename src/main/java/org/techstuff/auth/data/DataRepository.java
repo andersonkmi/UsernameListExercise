@@ -36,7 +36,7 @@ public class DataRepository {
     public List<RestrictedWord> findAllRestrictedWords() {
         logger.info("calling findAllRestrictedWords() method");
 
-        String statement = "SELECT word FROM forbidden_words";
+        String statement = "SELECT id, word FROM forbidden_words";
         List<RestrictedWord> results = jdbcTemplate.query(statement, new RestrictedWordRowMapper());
         return results;
     }

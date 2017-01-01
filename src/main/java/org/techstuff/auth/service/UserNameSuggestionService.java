@@ -11,6 +11,7 @@ import java.util.Random;
 @Service
 public class UserNameSuggestionService {
     private static final int SUGGESTIONS_QUANTITY = 14;
+    private static final String REPLACEMENT_RESTRICTED_WORD = "usr";
 
     @Resource
     private DataRepository dataRepository;
@@ -22,7 +23,7 @@ public class UserNameSuggestionService {
     }
 
     public List<String> generateSuggestions(final String userName, final String restrictedWord) {
-        String replacementUserName = userName.replace(restrictedWord, "app");
+        String replacementUserName = userName.replace(restrictedWord, REPLACEMENT_RESTRICTED_WORD);
         List<String> suggestions = new ArrayList<>();
         processStrategies(suggestions, replacementUserName);
         return suggestions;
