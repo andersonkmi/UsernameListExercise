@@ -6,9 +6,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
-public class UserDAO {
-    private static final Logger logger = Logger.getLogger(UserDAO.class);
+public class DataRepository {
+    private static final Logger logger = Logger.getLogger(DataRepository.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -28,5 +30,14 @@ public class UserDAO {
 
         String statement = "SELECT COUNT(1) FROM user WHERE user_name = ?";
         return jdbcTemplate.queryForObject(statement, new Object[] {userName}, Integer.class);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RestrictedWord> findAllRestrictedWords() {
+        logger.info("calling findAllRestrictedWords() method");
+
+        String statement = "SELECT word FROM forbidden_words";
+        List<RestrictedWord> results = jdbcTemplate.query(statement, new RestrictedWordRowMapper());
+        return results;
     }
 }
