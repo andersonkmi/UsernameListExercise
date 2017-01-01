@@ -17,16 +17,16 @@ public class UserDAO {
     public void add(final User user) {
         logger.info("Calling add method");
 
-        String statement = "INSERT INTO user(login, fist_name, last_name) VALUES(?, ?, ?)";
-        int modified = jdbcTemplate.update(statement, new Object[] {user.getLogin(), user.getFirstName(), user.getLastName()});
+        String statement = "INSERT INTO user(user_name, fist_name, last_name) VALUES(?, ?, ?)";
+        int modified = jdbcTemplate.update(statement, new Object[] {user.getUserName(), user.getFirstName(), user.getLastName()});
         logger.info(String.format("Inserted/Modified rows: %d", modified));
     }
 
     @Transactional(readOnly = true)
-    public int count(final String login) {
+    public int count(final String userName) {
         logger.info("Calling exists method");
 
-        String statement = "SELECT COUNT(1) FROM user WHERE login = ?";
-        return jdbcTemplate.queryForObject(statement, new Object[] {login}, Integer.class);
+        String statement = "SELECT COUNT(1) FROM user WHERE user_name = ?";
+        return jdbcTemplate.queryForObject(statement, new Object[] {userName}, Integer.class);
     }
 }
