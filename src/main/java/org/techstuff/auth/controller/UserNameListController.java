@@ -14,7 +14,7 @@ import org.techstuff.auth.util.JsonUtil;
 import javax.annotation.Resource;
 
 @Controller
-@RequestMapping("/userNameService")
+@RequestMapping("/service")
 public class UserNameListController {
     private static final Logger logger = Logger.getLogger(UserNameListController.class);
 
@@ -24,7 +24,7 @@ public class UserNameListController {
     @Resource
     private UserNameValidationService userNameValidationService;
 
-    @RequestMapping(value = "/checkUserName/{userName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/checkusername/{userName}", method = RequestMethod.GET)
     public @ResponseBody String checkUserName(@PathVariable String userName) {
         logger.info("Calling checkUserName method");
 

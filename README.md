@@ -11,6 +11,8 @@ The pre-requisites for this application are:
 
 Maven and Java 8 are used for building the application and for executing it. The application makes use of a MySQL/MariaDB database to register the user names and the restricted words for the application.
 
+Java 8 is used because lambda functions are used for handling lists of user names and restricted words during the verification procedure.
+
 ## Description
 This microservice is a Spring Boot based application that launches an embedded Tomcat listening for requests at the port 8080 (by default). In the following sections it will be described the building process and how to send requests to it.
 
@@ -41,7 +43,7 @@ Once the build process is finished successfully, there will be file named <stron
 ## Running the application
 Once the application is successfully built, in order to execute it just issue the following command inside the <strong>target</strong> folder:
 ```
-java -jar UserNameListMicroservice-1.0.0.0jar
+java -jar UserNameListMicroservice-1.0.0.0.jar
 ```
 Upon executing it, the application is launched at the port 8080. See below an example of the output when executing it:
 ``` bash
@@ -56,3 +58,39 @@ Upon executing it, the application is launched at the port 8080. See below an ex
 2017-01-02 21:52:40.097  INFO 1835 --- [           main] .t.a.UsernameListMicroserviceApplication : Started UsernameListMicroserviceApplication in 5.809 seconds (JVM running for 6.563)
 ```
 ## Invoking the service
+In order to call the service, open a web browser and type the following URL:
+```
+http://localhost:8080/service/checkusername/{username}
+```
+where <strong>{username}</strong> should be replaced with the user name to be verified.
+
+For example, the following call to the service using _skywalker_ as an example, the URL request will look like:
+```
+http://localhost:8080/service/checkusername/skywalker
+```
+The response for such call will be:
+``` json
+{
+  "isValid":true,
+  "message":"User name is valid!",
+  "suggestions":[]
+}
+```
+In the above example, the user name <strong>skywalker</strong> is valid because it is not in use yet.
+
+Suppose the user name already exists in the database (i.e anderson), the following response will be generated:
+``` json
+{
+  "isValid":false,
+  "message":"User name is already in use!",
+  "suggestions":["anderson2","anderson3","anderson4","anderson5","anderson6","anderson7","anderson8","anderson9","anderson10","anderson11","anderson12","anderson13","anderson14","andersonanderson1"]
+}
+```
+In the previous response the user name 'anderson' is already in use so in this case, the _isValid_ field is set to false and a list of valid suggestions is returned.
+
+## Future improvements
+Given the current implementation, the following improvements could be done in the future:
++ Use a caching mechanism such as AWS Elasticache (Redis) between the application and the database.
++ Extend the service to provide calls to insert users and restricted words into the database.
++ Improve service security: include an authentication mechanism via OAUTH 2.0 when calling the service. Currently no authentication is required.
++ Improve application logging.
